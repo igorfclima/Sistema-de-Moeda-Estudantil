@@ -550,18 +550,35 @@ export default function Home() {
                                                 <select
                                                     value={instituicaoId}
                                                     onChange={(event) =>
-                                                        setInstituicaoId(event.target.value)
+                                                        setInstituicaoId(
+                                                            event.target.value,
+                                                        )
                                                     }
                                                     className="h-12 w-full appearance-none rounded-2xl border border-[var(--border)] bg-white/80 pl-12 pr-4 text-[15px] outline-none transition focus:border-[rgba(124,58,237,0.35)] focus:ring-4 focus:ring-[rgba(124,58,237,0.12)]"
                                                 >
-                                                    {instituicoes.length === 0 ? (
-                                                        <option value="">Carregando instituições...</option>
+                                                    {instituicoes.length ===
+                                                    0 ? (
+                                                        <option value="">
+                                                            Carregando
+                                                            instituições...
+                                                        </option>
                                                     ) : (
-                                                        instituicoes.map((instituicao) => (
-                                                            <option key={instituicao.id} value={instituicao.id}>
-                                                                {instituicao.nome}
-                                                            </option>
-                                                        ))
+                                                        instituicoes.map(
+                                                            (instituicao) => (
+                                                                <option
+                                                                    key={
+                                                                        instituicao.id
+                                                                    }
+                                                                    value={
+                                                                        instituicao.id
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        instituicao.nome
+                                                                    }
+                                                                </option>
+                                                            ),
+                                                        )
                                                     )}
                                                 </select>
                                             </div>
@@ -649,18 +666,34 @@ export default function Home() {
                                             <select
                                                 value={instituicaoId}
                                                 onChange={(event) =>
-                                                    setInstituicaoId(event.target.value)
+                                                    setInstituicaoId(
+                                                        event.target.value,
+                                                    )
                                                 }
                                                 className="h-12 w-full appearance-none rounded-2xl border border-[var(--border)] bg-white/80 pl-12 pr-4 text-[15px] outline-none transition focus:border-[rgba(124,58,237,0.35)] focus:ring-4 focus:ring-[rgba(124,58,237,0.12)]"
                                             >
                                                 {instituicoes.length === 0 ? (
-                                                    <option value="">Carregando instituições...</option>
+                                                    <option value="">
+                                                        Carregando
+                                                        instituições...
+                                                    </option>
                                                 ) : (
-                                                    instituicoes.map((instituicao) => (
-                                                        <option key={instituicao.id} value={instituicao.id}>
-                                                            {instituicao.nome}
-                                                        </option>
-                                                    ))
+                                                    instituicoes.map(
+                                                        (instituicao) => (
+                                                            <option
+                                                                key={
+                                                                    instituicao.id
+                                                                }
+                                                                value={
+                                                                    instituicao.id
+                                                                }
+                                                            >
+                                                                {
+                                                                    instituicao.nome
+                                                                }
+                                                            </option>
+                                                        ),
+                                                    )
                                                 )}
                                             </select>
                                         </div>
