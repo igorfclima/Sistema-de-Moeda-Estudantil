@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 
 function Icon({ name, className }: { name: string; className?: string }) {
     const base = "inline-block align-middle " + (className ?? "");
@@ -171,6 +171,13 @@ type LoginResponse = {
     email: string;
 };
 
+type Instituicao = {
+    id: string;
+    nome: string;
+    cnpj: string;
+    ativa: boolean;
+};
+
 const profiles: Array<{ key: Profile; label: string; hint: string }> = [
     { key: "ALUNO", label: "Aluno", hint: "Crie sua conta estudantil" },
     { key: "PROFESSOR", label: "Professor", hint: "Crie sua conta de docente" },
@@ -182,6 +189,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 export default function Home() {
     const [mode, setMode] = useState<Mode>("login");
     const [selectedProfile, setSelectedProfile] = useState<Profile>("ALUNO");
+    const [instituicoes, setInstituicoes] = useState<Instituicao[]>([]);
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
     const [nome, setNome] = useState("");
@@ -195,6 +203,35 @@ export default function Home() {
     const [instituicaoId, setInstituicaoId] = useState("");
     const [status, setStatus] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        let ativo = true;
+
+        async function carregarInstituicoes() {
+            try {
+                const response = await fetch(`${apiUrl}/api/instituicoes`);
+                if (!response.ok) {
+                    return;
+                }
+
+                const data = (await response.json()) as Instituicao[];
+                if (ativo) {
+                    setInstituicoes(data);
+                    setInstituicaoId((current) => current || data[0]?.id || "");
+                }
+            } catch {
+                if (ativo) {
+                    setInstituicoes([]);
+                }
+            }
+        }
+
+        carregarInstituicoes();
+
+        return () => {
+            ativo = false;
+        };
+    }, []);
 
     const currentProfile = useMemo(
         () => profiles.find((profile) => profile.key === selectedProfile),
@@ -504,23 +541,29 @@ export default function Home() {
                                     <div className="grid grid-cols-2 gap-3">
                                         <label className="block space-y-2">
                                             <span className="text-sm font-medium text-[var(--foreground)]">
-                                                ID da instituição
+                                                Instituição
                                             </span>
                                             <div className="relative">
                                                 <span className="absolute left-4 top-3 text-[var(--muted)]">
-                                                    <Icon name="id" />
+                                                    <Icon name="building" />
                                                 </span>
-                                                <input
+                                                <select
                                                     value={instituicaoId}
                                                     onChange={(event) =>
-                                                        setInstituicaoId(
-                                                            event.target.value,
-                                                        )
+                                                        setInstituicaoId(event.target.value)
                                                     }
-                                                    type="text"
-                                                    placeholder="UUID da instituição"
-                                                    className="h-12 w-full rounded-2xl border border-[var(--border)] bg-white/80 pl-12 pr-4 text-[15px] outline-none transition placeholder:text-[#9b93ae] focus:border-[rgba(124,58,237,0.35)] focus:ring-4 focus:ring-[rgba(124,58,237,0.12)]"
-                                                />
+                                                    className="h-12 w-full appearance-none rounded-2xl border border-[var(--border)] bg-white/80 pl-12 pr-4 text-[15px] outline-none transition focus:border-[rgba(124,58,237,0.35)] focus:ring-4 focus:ring-[rgba(124,58,237,0.12)]"
+                                                >
+                                                    {instituicoes.length === 0 ? (
+                                                        <option value="">Carregando instituições...</option>
+                                                    ) : (
+                                                        instituicoes.map((instituicao) => (
+                                                            <option key={instituicao.id} value={instituicao.id}>
+                                                                {instituicao.nome}
+                                                            </option>
+                                                        ))
+                                                    )}
+                                                </select>
                                             </div>
                                         </label>
                                         <label className="block space-y-2">
@@ -597,23 +640,29 @@ export default function Home() {
                                     </div>
                                     <label className="block space-y-2">
                                         <span className="text-sm font-medium text-[var(--foreground)]">
-                                            ID da instituição
+                                            Instituição
                                         </span>
                                         <div className="relative">
                                             <span className="absolute left-4 top-3 text-[var(--muted)]">
-                                                <Icon name="id" />
+                                                <Icon name="building" />
                                             </span>
-                                            <input
+                                            <select
                                                 value={instituicaoId}
                                                 onChange={(event) =>
-                                                    setInstituicaoId(
-                                                        event.target.value,
-                                                    )
+                                                    setInstituicaoId(event.target.value)
                                                 }
-                                                type="text"
-                                                placeholder="UUID da instituição"
-                                                className="h-12 w-full rounded-2xl border border-[var(--border)] bg-white/80 pl-12 pr-4 text-[15px] outline-none transition placeholder:text-[#9b93ae] focus:border-[rgba(124,58,237,0.35)] focus:ring-4 focus:ring-[rgba(124,58,237,0.12)]"
-                                            />
+                                                className="h-12 w-full appearance-none rounded-2xl border border-[var(--border)] bg-white/80 pl-12 pr-4 text-[15px] outline-none transition focus:border-[rgba(124,58,237,0.35)] focus:ring-4 focus:ring-[rgba(124,58,237,0.12)]"
+                                            >
+                                                {instituicoes.length === 0 ? (
+                                                    <option value="">Carregando instituições...</option>
+                                                ) : (
+                                                    instituicoes.map((instituicao) => (
+                                                        <option key={instituicao.id} value={instituicao.id}>
+                                                            {instituicao.nome}
+                                                        </option>
+                                                    ))
+                                                )}
+                                            </select>
                                         </div>
                                     </label>
                                 </>
