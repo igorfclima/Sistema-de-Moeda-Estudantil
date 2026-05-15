@@ -71,22 +71,31 @@ export default function InstituicoesPage() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900">
-                        Instituições
-                    </h1>
-                    <p className="mt-2 text-gray-600">
-                        Gerencie todas as instituições do sistema
-                    </p>
-                </div>
+            <div>
                 <Link
-                    href="/dashboard/admin/instituicoes/criar"
-                    className="flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-purple-600 to-purple-700 text-white font-medium hover:shadow-lg transition"
+                    href="/dashboard/admin"
+                    className="inline-flex items-center gap-1 text-sm text-purple-600 hover:text-purple-800 font-medium mb-4 transition"
                 >
-                    <MdAdd className="text-xl" />
-                    Criar Instituição
+                    ← Voltar ao painel
                 </Link>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-900">
+                            Instituições
+                        </h1>
+                        <p className="mt-2 text-gray-600">
+                            Gerencie todas as instituições do sistema
+                        </p>
+                    </div>
+                    <Link
+                        href="/dashboard/admin/instituicoes/criar"
+                        className="flex items-center gap-2 px-6 py-3 rounded-lg text-white font-medium hover:shadow-lg transition"
+                        style={{ background: "linear-gradient(135deg, #7c3aed, #6d28d9)" }}
+                    >
+                        <MdAdd className="text-xl" />
+                        Criar Instituição
+                    </Link>
+                </div>
             </div>
 
             {/* Messages */}

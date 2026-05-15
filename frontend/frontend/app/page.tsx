@@ -58,8 +58,8 @@ const features = [
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
         ),
-        title: "Segurança e controle",
-        desc: "Autenticação JWT, controle de papéis e validação de saldo em todas as operações do sistema.",
+        title: "Controle e rastreabilidade",
+        desc: "Histórico completo de todas as transações, resgates e validações disponível para cada perfil.",
     },
 ];
 
@@ -67,19 +67,19 @@ const steps = [
     {
         num: "1",
         role: "Professor",
-        color: "from-purple-600 to-purple-700",
+        gradient: "linear-gradient(135deg, #7c3aed, #6d28d9)",
         action: "Recebe 1.000 moedas semestrais e envia para alunos que se destacam com uma mensagem de reconhecimento.",
     },
     {
         num: "2",
         role: "Aluno",
-        color: "from-violet-600 to-purple-600",
+        gradient: "linear-gradient(135deg, #8b5cf6, #7c3aed)",
         action: "Acumula moedas recebidas e as troca por vantagens exclusivas oferecidas pelas empresas parceiras.",
     },
     {
         num: "3",
         role: "Empresa",
-        color: "from-purple-700 to-indigo-700",
+        gradient: "linear-gradient(135deg, #6d28d9, #4338ca)",
         action: "Cadastra vantagens com foto e preço em moedas. Recebe notificação a cada resgate e valida os cupons.",
     },
 ];
@@ -90,14 +90,14 @@ const actors = [
         desc: "Receba moedas por mérito, acompanhe seu extrato e resgate vantagens exclusivas de empresas parceiras.",
         href: "/auth",
         cta: "Criar conta de aluno",
-        bg: "from-purple-600 to-purple-800",
+        gradient: "linear-gradient(135deg, #7c3aed, #5b21b6)",
     },
     {
         title: "Empresa Parceira",
         desc: "Cadastre vantagens com foto e descrição, acompanhe os resgates e valorize o mérito estudantil.",
         href: "/auth",
         cta: "Cadastrar empresa",
-        bg: "from-violet-600 to-purple-700",
+        gradient: "linear-gradient(135deg, #8b5cf6, #6d28d9)",
     },
 ];
 
@@ -108,7 +108,10 @@ export default function LandingPage() {
             <nav className="sticky top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur-lg">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[linear-gradient(135deg,#7c3aed,#6d28d9)] text-sm font-bold text-white shadow-md">
+                        <div
+                            className="flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold text-white shadow-md"
+                            style={{ background: "linear-gradient(135deg, #7c3aed, #6d28d9)" }}
+                        >
                             ★
                         </div>
                         <div>
@@ -125,7 +128,8 @@ export default function LandingPage() {
                         </Link>
                         <Link
                             href="/auth"
-                            className="inline-flex items-center px-4 py-2 rounded-xl bg-[linear-gradient(135deg,#7c3aed,#6d28d9)] text-sm font-semibold text-white shadow-md hover:-translate-y-px transition"
+                            className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold shadow-md hover:-translate-y-px transition"
+                            style={{ background: "linear-gradient(135deg, #7c3aed, #6d28d9)", color: "white" }}
                         >
                             Criar conta
                         </Link>
@@ -134,8 +138,7 @@ export default function LandingPage() {
             </nav>
 
             {/* Hero */}
-            <section className="relative overflow-hidden bg-[linear-gradient(160deg,#faf5ff_0%,#ede9fe_40%,#ddd6fe_100%)] py-20 sm:py-28 lg:py-36">
-                {/* decorative circles */}
+            <section className="relative overflow-hidden py-20 sm:py-28 lg:py-36" style={{ background: "linear-gradient(160deg, #faf5ff 0%, #ede9fe 40%, #ddd6fe 100%)" }}>
                 <div className="pointer-events-none absolute -top-40 -right-40 h-[600px] w-[600px] rounded-full bg-purple-300/20 blur-3xl" />
                 <div className="pointer-events-none absolute -bottom-32 -left-32 h-[400px] w-[400px] rounded-full bg-violet-400/15 blur-3xl" />
 
@@ -146,7 +149,7 @@ export default function LandingPage() {
                     </span>
                     <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight tracking-tight">
                         Valorize o{" "}
-                        <span className="bg-[linear-gradient(135deg,#7c3aed,#6d28d9)] bg-clip-text text-transparent">
+                        <span className="bg-clip-text text-transparent" style={{ backgroundImage: "linear-gradient(135deg, #7c3aed, #6d28d9)" }}>
                             mérito estudantil
                         </span>
                         <br className="hidden sm:block" />
@@ -159,7 +162,8 @@ export default function LandingPage() {
                     <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Link
                             href="/auth"
-                            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-[linear-gradient(135deg,#7c3aed,#6d28d9)] text-white font-semibold text-base shadow-[0_12px_32px_rgba(124,58,237,0.35)] hover:-translate-y-0.5 transition"
+                            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl font-semibold text-base hover:-translate-y-0.5 transition"
+                            style={{ background: "linear-gradient(135deg, #7c3aed, #6d28d9)", color: "white", boxShadow: "0 12px 32px rgba(124,58,237,0.35)" }}
                         >
                             Começar agora
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -180,7 +184,7 @@ export default function LandingPage() {
                             { value: "1.000", label: "moedas por semestre" },
                             { value: "100%", label: "automático" },
                             { value: "4", label: "perfis de acesso" },
-                            { value: "JWT", label: "autenticação segura" },
+                            { value: "∞", label: "vantagens disponíveis" },
                         ].map((s) => (
                             <div key={s.label} className="text-center">
                                 <p className="text-2xl font-extrabold text-purple-700">{s.value}</p>
@@ -222,7 +226,7 @@ export default function LandingPage() {
             </section>
 
             {/* Como funciona */}
-            <section id="como-funciona" className="py-20 sm:py-28 bg-[linear-gradient(160deg,#faf5ff,#ede9fe)]">
+            <section id="como-funciona" className="py-20 sm:py-28" style={{ background: "linear-gradient(160deg, #faf5ff, #ede9fe)" }}>
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-14">
                         <p className="text-xs font-semibold uppercase tracking-widest text-purple-600 mb-3">Como funciona</p>
@@ -235,7 +239,8 @@ export default function LandingPage() {
                         {steps.map((s) => (
                             <div
                                 key={s.role}
-                                className={`relative rounded-3xl bg-[linear-gradient(135deg,${s.color})] p-8 text-white shadow-lg`}
+                                className="relative rounded-3xl p-8 shadow-lg"
+                                style={{ background: s.gradient, color: "white" }}
                             >
                                 <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-lg font-extrabold">
                                     {s.num}
@@ -275,13 +280,15 @@ export default function LandingPage() {
                         {actors.map((a) => (
                             <div
                                 key={a.title}
-                                className={`rounded-3xl bg-[linear-gradient(135deg,${a.bg})] p-8 text-white shadow-xl flex flex-col`}
+                                className="rounded-3xl p-8 shadow-xl flex flex-col"
+                                style={{ background: a.gradient, color: "white" }}
                             >
                                 <h3 className="text-2xl font-extrabold mb-3">{a.title}</h3>
                                 <p className="text-purple-100 text-sm leading-relaxed flex-1">{a.desc}</p>
                                 <Link
                                     href={a.href}
-                                    className="mt-6 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white text-purple-700 font-semibold text-sm hover:bg-purple-50 transition"
+                                    className="mt-6 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white font-semibold text-sm hover:bg-purple-50 transition"
+                                    style={{ color: "#6d28d9" }}
                                 >
                                     {a.cta}
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -299,7 +306,7 @@ export default function LandingPage() {
             </section>
 
             {/* Final CTA */}
-            <section className="py-20 bg-[linear-gradient(135deg,#7c3aed,#6d28d9)]">
+            <section className="py-20" style={{ background: "linear-gradient(135deg, #7c3aed, #6d28d9)" }}>
                 <div className="mx-auto max-w-3xl px-4 sm:px-6 text-center">
                     <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4">
                         Pronto para começar?
@@ -309,7 +316,8 @@ export default function LandingPage() {
                     </p>
                     <Link
                         href="/auth"
-                        className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-white text-purple-700 font-bold text-base hover:bg-purple-50 transition shadow-[0_8px_32px_rgba(0,0,0,0.2)]"
+                        className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-white font-bold text-base hover:bg-purple-50 transition"
+                        style={{ color: "#7c3aed", boxShadow: "0 8px 32px rgba(0,0,0,0.2)" }}
                     >
                         Acessar o sistema
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -332,7 +340,7 @@ export default function LandingPage() {
                         </div>
                     </div>
                     <p className="text-xs">
-                        Desenvolvido com Next.js · Spring Boot · PostgreSQL
+                        Plataforma educacional de reconhecimento acadêmico
                     </p>
                     <Link href="/auth" className="text-sm text-purple-400 hover:text-purple-300 font-medium transition">
                         Acessar sistema →
