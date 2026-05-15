@@ -7,10 +7,18 @@ services:
     plan: free
     healthCheckPath: /actuator/health
     envVars:
-      - key: DATABASE_URL
+      - key: DB_HOST
         fromDatabase:
           name: sistema-merito-db
-          property: connectionString
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: sistema-merito-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: sistema-merito-db
+          property: database
       - key: DB_USERNAME
         fromDatabase:
           name: sistema-merito-db
