@@ -28,7 +28,7 @@ services:
           name: sistema-merito-db
           property: password
       - key: DDL_AUTO
-        value: none
+        value: update
       - key: SHOW_SQL
         value: "false"
       - key: JWT_SECRET
