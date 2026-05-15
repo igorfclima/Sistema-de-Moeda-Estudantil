@@ -17,14 +17,20 @@ public class ServicoProfessor {
 
     private final ProfessorRepository professorRepository;
     private final InstituicaoRepository instituicaoRepository;
+    private final com.merito.sistema_merito.service.ServicoMoeda servicoMoeda;
+    private final com.merito.sistema_merito.repository.AlunoRepository alunoRepository;
     private final PasswordEncoder passwordEncoder;
 
     public ServicoProfessor(ProfessorRepository professorRepository,
                             InstituicaoRepository instituicaoRepository,
-                            PasswordEncoder passwordEncoder) {
+                            PasswordEncoder passwordEncoder,
+                            com.merito.sistema_merito.service.ServicoMoeda servicoMoeda,
+                            com.merito.sistema_merito.repository.AlunoRepository alunoRepository) {
         this.professorRepository = professorRepository;
         this.instituicaoRepository = instituicaoRepository;
         this.passwordEncoder = passwordEncoder;
+        this.servicoMoeda = servicoMoeda;
+        this.alunoRepository = alunoRepository;
     }
 
     @Transactional
@@ -38,7 +44,7 @@ public class ServicoProfessor {
         professor.setNome(request.getNome());
         professor.setCpf(request.getCpf());
         professor.setDepartamento(request.getDepartamento());
-        professor.setSaldoMoedas(0);
+        professor.setSaldoMoedas(1000);
         professor.setInstituicao(instituicao);
         return professorRepository.save(professor);
     }
@@ -70,5 +76,24 @@ public class ServicoProfessor {
     @Transactional
     public void deletar(UUID id) {
         professorRepository.delete(buscarPorId(id));
+    }
+
+    public int consultarSaldo(UUID professorId) {
+        return servicoMoeda.consultarSaldoProfessor(professorId);
+    }
+
+    public java.util.List<com.merito.sistema_merito.domain.dto.TransacaoEnvioDto> consultarExtrato(UUID professorId) {
+        return servicoMoeda.consultarExtratoProfessor(professorId);
+    }
+
+    @Transactional
+    public com.merito.sistema_merito.domain.entity.TransacaoEnvio enviarMoedas(UUID professorId, UUID alunoId, int quantidade, String motivo) {
+        return servicoMoeda.enviarMoedas(professorId, alunoId, quantidade, motivo);
+    }
+
+    public java.util.List<com.merito.sistema_merito.domain.entity.Aluno> listarAlunosDaInstituicao(UUID professorId) {
+        Professor professor = buscarPorId(professorId);
+        UUID instituicaoId = professor.getInstituicao().getId();
+        return alunoRepository.findAll().stream().filter(a -> a.getInstituicao().getId().equals(instituicaoId)).toList();
     }
 }

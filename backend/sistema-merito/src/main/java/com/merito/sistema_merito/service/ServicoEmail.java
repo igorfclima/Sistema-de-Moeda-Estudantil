@@ -10,13 +10,15 @@ import com.merito.sistema_merito.repository.NotificacaoRepository;
 import java.time.OffsetDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import jakarta.mail.internet.MimeMessage;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Deprecated // Desabilitado até configuração de email
-//@Service
+@Service
 public class ServicoEmail {
 
     private static final Logger log = LoggerFactory.getLogger(ServicoEmail.class);
@@ -26,7 +28,8 @@ public class ServicoEmail {
 
     private static final String EMAIL_REMETENTE = "noreply@sistemamerito.com";
 
-    public ServicoEmail(JavaMailSender mailSender, NotificacaoRepository notificacaoRepository) {
+    public ServicoEmail(@org.springframework.beans.factory.annotation.Autowired(required = false) JavaMailSender mailSender,
+                        NotificacaoRepository notificacaoRepository) {
         this.mailSender = mailSender;
         this.notificacaoRepository = notificacaoRepository;
     }
@@ -135,7 +138,11 @@ public class ServicoEmail {
             mail.setSubject(assunto);
             mail.setText(mensagem);
 
-            mailSender.send(mail);
+            if (mailSender != null) {
+                mailSender.send(mail);
+            } else {
+                log.info("MailSender não configurado — simulando envio para {}", emailDestino);
+            }
 
             // Registra notificação no banco de dados
             Notificacao notificacao = new Notificacao(null, emailDestino, assunto, mensagem, tipo, OffsetDateTime.now(), aluno, empresa);
@@ -149,6 +156,35 @@ public class ServicoEmail {
             // Registra notificação mesmo se falhar (para auditoria)
             Notificacao notificacao = new Notificacao(null, emailDestino, assunto, mensagem + "\n\n[ERRO AO ENVIAR - será retentado]", tipo, OffsetDateTime.now(), aluno, empresa);
 
+            notificacaoRepository.save(notificacao);
+        }
+    }
+
+    /**
+     * Envia um email com um PDF em anexo. Registra notificação mesmo se o envio falhar.
+     */
+    @Transactional
+    public void enviarPdfAnexo(String emailDestino, String assunto, String mensagemTexto, byte[] pdfBytes, String filename, TipoNotificacao tipo) {
+        try {
+            if (mailSender != null) {
+                MimeMessage mime = ((JavaMailSender) mailSender).createMimeMessage();
+                MimeMessageHelper helper = new MimeMessageHelper(mime, true, "UTF-8");
+                helper.setFrom(EMAIL_REMETENTE);
+                helper.setTo(emailDestino);
+                helper.setSubject(assunto);
+                helper.setText(mensagemTexto != null ? mensagemTexto : "");
+                helper.addAttachment(filename != null ? filename : "document.pdf", new ByteArrayResource(pdfBytes));
+                ((JavaMailSender) mailSender).send(mime);
+            } else {
+                log.info("MailSender não configurado — simulando envio (anexo) para {}", emailDestino);
+            }
+
+            Notificacao notificacao = new Notificacao(null, emailDestino, assunto, mensagemTexto, tipo, OffsetDateTime.now(), null, null);
+            notificacaoRepository.save(notificacao);
+            log.info("Email com anexo enviado para: {}", emailDestino);
+        } catch (Exception e) {
+            log.error("Erro ao enviar email com anexo para: {} - Erro: {}", emailDestino, e.getMessage(), e);
+            Notificacao notificacao = new Notificacao(null, emailDestino, assunto, mensagemTexto + "\n\n[ERRO AO ENVIAR - será retentado]", tipo, OffsetDateTime.now(), null, null);
             notificacaoRepository.save(notificacao);
         }
     }

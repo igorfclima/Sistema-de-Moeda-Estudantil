@@ -18,8 +18,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Deprecated // Desabilitado até configuração de email
-//@Service
+@Service
 public class ServicoResgate {
 
     private final AlunoRepository alunoRepository;

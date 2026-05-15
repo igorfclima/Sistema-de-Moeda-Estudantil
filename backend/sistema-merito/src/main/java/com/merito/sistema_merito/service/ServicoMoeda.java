@@ -1,5 +1,6 @@
 package com.merito.sistema_merito.service;
 
+import com.merito.sistema_merito.domain.dto.TransacaoEnvioDto;
 import com.merito.sistema_merito.domain.entity.Aluno;
 import com.merito.sistema_merito.domain.entity.Professor;
 import com.merito.sistema_merito.domain.entity.TransacaoEnvio;
@@ -14,8 +15,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Deprecated // Desabilitado até configuração de email
-//@Service
+@Service
 public class ServicoMoeda {
 
     private final ProfessorRepository professorRepository;
@@ -129,33 +129,43 @@ public class ServicoMoeda {
                 .getSaldoMoedas();
     }
 
-    /**
-     * Retorna o histórico de transações (envios de moedas) de um aluno.
-     *
-     * @param alunoId ID do aluno
-     * @return Lista de transações ordenadas por data (mais recente primeiro)
-     */
-    public List<TransacaoEnvio> consultarExtratoAluno(UUID alunoId) {
-        // Valida que aluno existe
+    @Transactional(readOnly = true)
+    public List<TransacaoEnvioDto> consultarExtratoAluno(UUID alunoId) {
         alunoRepository.findById(alunoId)
                 .orElseThrow(() -> new RecursoNaoEncontradoException(
                         "Aluno com ID " + alunoId + " não encontrado"));
 
-        return transacaoEnvioRepository.findByAlunoIdOrderByDataHoraDesc(alunoId);
+        return transacaoEnvioRepository.findByAlunoIdOrderByDataHoraDesc(alunoId)
+                .stream()
+                .map(t -> new TransacaoEnvioDto(
+                        t.getId(),
+                        "RECEBIMENTO",
+                        t.getQuantidade(),
+                        t.getDataHora(),
+                        t.getMotivo(),
+                        t.getProfessor().getNome(),
+                        t.getAluno().getNome()
+                ))
+                .toList();
     }
 
-    /**
-     * Retorna o histórico de transações (envios realizados) de um professor.
-     *
-     * @param professorId ID do professor
-     * @return Lista de transações ordenadas por data (mais recente primeiro)
-     */
-    public List<TransacaoEnvio> consultarExtratoProfessor(UUID professorId) {
-        // Valida que professor existe
+    @Transactional(readOnly = true)
+    public List<TransacaoEnvioDto> consultarExtratoProfessor(UUID professorId) {
         professorRepository.findById(professorId)
                 .orElseThrow(() -> new RecursoNaoEncontradoException(
                         "Professor com ID " + professorId + " não encontrado"));
 
-        return transacaoEnvioRepository.findByProfessorIdOrderByDataHoraDesc(professorId);
+        return transacaoEnvioRepository.findByProfessorIdOrderByDataHoraDesc(professorId)
+                .stream()
+                .map(t -> new TransacaoEnvioDto(
+                        t.getId(),
+                        "ENVIO",
+                        t.getQuantidade(),
+                        t.getDataHora(),
+                        t.getMotivo(),
+                        t.getProfessor().getNome(),
+                        t.getAluno().getNome()
+                ))
+                .toList();
     }
 }

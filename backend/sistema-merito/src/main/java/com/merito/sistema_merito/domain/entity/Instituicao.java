@@ -11,6 +11,7 @@ import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "instituicoes")
@@ -29,9 +30,11 @@ public class Instituicao {
     @Column(nullable = false)
     private Boolean ativa = Boolean.TRUE;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "instituicao", cascade = CascadeType.ALL)
     private List<Professor> professores = new ArrayList<>();
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "instituicao", cascade = CascadeType.ALL)
     private List<Aluno> alunos = new ArrayList<>();
 

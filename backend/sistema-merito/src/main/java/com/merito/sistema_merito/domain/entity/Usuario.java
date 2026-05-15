@@ -1,5 +1,6 @@
 package com.merito.sistema_merito.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
@@ -24,6 +25,7 @@ public abstract class Usuario {
     @Column(nullable = false, unique = true, length = 150)
     private String email;
 
+    @JsonIgnore
     @Column(name = "senha_hash", nullable = false, length = 255)
     private String senhaHash;
 

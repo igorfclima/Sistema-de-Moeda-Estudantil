@@ -7,6 +7,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.UUID;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "alunos")
@@ -30,6 +31,7 @@ public class Aluno extends Usuario {
     @Column(name = "saldo_moedas", nullable = false)
     private Integer saldoMoedas;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "instituicao_id", nullable = false)
     private Instituicao instituicao;

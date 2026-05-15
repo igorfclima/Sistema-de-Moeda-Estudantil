@@ -19,11 +19,15 @@ public class ServicoAluno {
     private final AlunoRepository alunoRepository;
     private final InstituicaoRepository instituicaoRepository;
     private final PasswordEncoder passwordEncoder;
+    private final com.merito.sistema_merito.service.ServicoMoeda servicoMoeda;
+    private final com.merito.sistema_merito.service.ServicoResgate servicoResgate;
 
-    public ServicoAluno(AlunoRepository alunoRepository, InstituicaoRepository instituicaoRepository, PasswordEncoder passwordEncoder) {
+    public ServicoAluno(AlunoRepository alunoRepository, InstituicaoRepository instituicaoRepository, PasswordEncoder passwordEncoder, com.merito.sistema_merito.service.ServicoMoeda servicoMoeda, com.merito.sistema_merito.service.ServicoResgate servicoResgate) {
         this.alunoRepository = alunoRepository;
         this.instituicaoRepository = instituicaoRepository;
         this.passwordEncoder = passwordEncoder;
+        this.servicoMoeda = servicoMoeda;
+        this.servicoResgate = servicoResgate;
     }
 
     @Transactional
@@ -76,5 +80,32 @@ public class ServicoAluno {
     public void deletar(UUID id) {
         Aluno existente = buscarPorId(id);
         alunoRepository.delete(existente);
+    }
+
+    public int consultarSaldo(UUID alunoId) {
+        return servicoMoeda.consultarSaldoAluno(alunoId);
+    }
+
+    public java.util.List<com.merito.sistema_merito.domain.dto.TransacaoEnvioDto> consultarExtrato(UUID alunoId) {
+        return servicoMoeda.consultarExtratoAluno(alunoId);
+    }
+
+    @Transactional
+    public com.merito.sistema_merito.domain.entity.TransacaoResgate resgatar(UUID alunoId, java.util.UUID vantagemId) {
+        return servicoResgate.resgatar(alunoId, vantagemId);
+    }
+
+    @Transactional
+    public java.util.List<com.merito.sistema_merito.domain.dto.ResgateDto> consultarResgates(UUID alunoId) {
+        return servicoResgate.consultarResgatesAluno(alunoId).stream()
+                .map(r -> new com.merito.sistema_merito.domain.dto.ResgateDto(
+                        r.getId(),
+                        r.getVantagem().getId(),
+                        r.getDataHora(),
+                        r.getCupom() != null ? r.getCupom().getCodigoUnico() : null,
+                        r.getVantagem().getNome(),
+                        r.getVantagem().getCustoMoedas()
+                ))
+                .toList();
     }
 }

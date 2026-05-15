@@ -46,6 +46,35 @@ public class AlunoController {
         return ResponseEntity.ok(toDto(servicoAluno.buscarPorId(id)));
     }
 
+    @GetMapping("/{id}/saldo")
+    public ResponseEntity<Integer> saldo(@PathVariable UUID id) {
+        return ResponseEntity.ok(servicoAluno.consultarSaldo(id));
+    }
+
+    @GetMapping("/{id}/extrato")
+    public ResponseEntity<List<com.merito.sistema_merito.domain.dto.TransacaoEnvioDto>> extrato(@PathVariable UUID id) {
+        return ResponseEntity.ok(servicoAluno.consultarExtrato(id));
+    }
+
+    @GetMapping("/{id}/resgates")
+    public ResponseEntity<List<com.merito.sistema_merito.domain.dto.ResgateDto>> resgates(@PathVariable UUID id) {
+        return ResponseEntity.ok(servicoAluno.consultarResgates(id));
+    }
+
+    @PostMapping("/{id}/resgatar")
+    public ResponseEntity<com.merito.sistema_merito.domain.dto.ResgateDto> resgatar(@PathVariable UUID id, @Valid @RequestBody com.merito.sistema_merito.domain.dto.ResgatarVantagemRequest request) {
+        var transacao = servicoAluno.resgatar(id, request.vantagemId());
+        var dto = new com.merito.sistema_merito.domain.dto.ResgateDto(
+                transacao.getId(),
+                transacao.getVantagem().getId(),
+                transacao.getDataHora(),
+                transacao.getCupom() != null ? transacao.getCupom().getCodigoUnico() : null,
+                transacao.getVantagem().getNome(),
+                transacao.getVantagem().getCustoMoedas()
+        );
+        return ResponseEntity.ok(dto);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<AlunoDto> atualizar(@PathVariable UUID id, @Valid @RequestBody AlunoRequest request) {
         return ResponseEntity.ok(toDto(servicoAluno.atualizar(id, request)));

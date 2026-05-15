@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/professores")
 public class ProfessorController {
@@ -29,6 +31,7 @@ public class ProfessorController {
         this.servicoProfessor = servicoProfessor;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<ProfessorDto> criar(@Valid @RequestBody ProfessorRequest request) {
         Professor criado = servicoProfessor.criar(request);
@@ -54,6 +57,27 @@ public class ProfessorController {
     public ResponseEntity<Void> deletar(@PathVariable UUID id) {
         servicoProfessor.deletar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/saldo")
+    public ResponseEntity<Integer> saldo(@PathVariable UUID id) {
+        return ResponseEntity.ok(servicoProfessor.consultarSaldo(id));
+    }
+
+    @GetMapping("/{id}/extrato")
+    public ResponseEntity<List<com.merito.sistema_merito.domain.dto.TransacaoEnvioDto>> extrato(@PathVariable UUID id) {
+        return ResponseEntity.ok(servicoProfessor.consultarExtrato(id));
+    }
+
+    @PostMapping("/{id}/enviar-moedas")
+    public ResponseEntity<?> enviarMoedas(@PathVariable UUID id, @Valid @RequestBody com.merito.sistema_merito.domain.dto.EnviarMoedasRequest request) {
+        var t = servicoProfessor.enviarMoedas(id, request.alunoId(), request.quantidade(), request.motivo());
+        return ResponseEntity.ok(t);
+    }
+
+    @GetMapping("/{id}/alunos")
+    public ResponseEntity<List<?>> alunosInstituicao(@PathVariable UUID id) {
+        return ResponseEntity.ok(servicoProfessor.listarAlunosDaInstituicao(id));
     }
 
     private ProfessorDto toDto(Professor professor) {
