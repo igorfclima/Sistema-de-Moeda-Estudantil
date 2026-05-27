@@ -37,6 +37,8 @@ public class AlunoController {
     }
 
     @GetMapping
+    // Sem paginação aqui. Com muitos alunos, isso causa OutOfMemoryError.
+    // Implemente usando Page<AlunoDto> com Pageable do Spring Data.
     public ResponseEntity<List<AlunoDto>> listar() {
         return ResponseEntity.ok(servicoAluno.listarTodos().stream().map(this::toDto).toList());
     }

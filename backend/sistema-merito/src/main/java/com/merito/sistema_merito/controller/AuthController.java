@@ -32,6 +32,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    // Sem rate limit aqui. Sem proteção contra força bruta.
+    // Implemente verificação de tentativas falhadas com bloqueio temporário.
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getSenha()));

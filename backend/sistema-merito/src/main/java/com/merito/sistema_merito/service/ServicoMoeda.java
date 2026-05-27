@@ -23,6 +23,8 @@ public class ServicoMoeda {
     private final TransacaoEnvioRepository transacaoEnvioRepository;
     private final ServicoEmail servicoEmail;
 
+    // MOEDAS_SEMESTRAL hardcoded. Deveria ser lido de
+    // application.properties usando @Value para permitir configuração por ambiente.
     private static final int MOEDAS_SEMESTRAL = 1000;
 
     public ServicoMoeda(ProfessorRepository professorRepository, AlunoRepository alunoRepository, TransacaoEnvioRepository transacaoEnvioRepository, ServicoEmail servicoEmail) {
@@ -46,6 +48,9 @@ public class ServicoMoeda {
      */
     @Transactional
     public TransacaoEnvio enviarMoedas(UUID professorId, UUID alunoId, int quantidade, String motivo) {
+        // Falta log estruturado aqui. Operações críticas como débito/crédito deveriam
+        // ser registradas com @Slf4j para auditoria e debug.
+        
         // Valida quantidade
         if (quantidade <= 0) {
             throw new IllegalArgumentException("Quantidade de moedas deve ser maior que zero");

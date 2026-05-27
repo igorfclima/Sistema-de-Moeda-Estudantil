@@ -14,6 +14,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
+    // Faltam handlers para SaldoInsuficienteException e VantagemIndisponivelException.
+    // Essas exceções retornam HTTP 500 quando deveriam retornar 400 (erro de negócio).
 
     @ExceptionHandler(RecursoNaoEncontradoException.class)
     public ResponseEntity<Object> handleNotFound(RecursoNaoEncontradoException ex) {
