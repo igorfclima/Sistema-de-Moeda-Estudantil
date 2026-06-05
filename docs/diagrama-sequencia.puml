@@ -1,0 +1,122 @@
+@startuml Diagrama de Sequência - Sistema de Mérito Estudantil
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontColor #000000
+
+skinparam participant {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam actor {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam database {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam sequence {
+    ArrowColor #000000
+    LifeLineBorderColor #000000
+    LifeLineBackgroundColor #FFFFFF
+    GroupBackgroundColor #FFFFFF
+    GroupBorderColor #000000
+    DividerBackgroundColor #FFFFFF
+    DividerBorderColor #000000
+}
+
+actor       "Aluno"             as Aluno
+actor       "Professor"         as Prof
+actor       "Empresa Parceira" as Empresa
+participant "Sistema de Mérito" as Sistema
+database    "Banco de Dados"    as DB
+participant "Notificador"        as Notif
+
+Aluno -> Sistema : 1.1 autenticar(login, senha)
+activate Sistema
+Sistema -> DB : 1.2 buscarUsuario(login)
+activate DB
+DB --> Sistema : 1.3 usuario
+deactivate DB
+Sistema --> Aluno : 1.4 tokenAcesso
+deactivate Sistema
+
+Prof -> Sistema : 2.1 enviarMoedas(aluno, quantidade, motivo)
+activate Sistema
+Sistema -> DB : 2.2 verificarSaldo(professor)
+activate DB
+DB --> Sistema : 2.3 saldoAtual
+deactivate DB
+alt Saldo suficiente
+    Sistema -> DB : 2.4 registrarTransacao(professor, aluno, quantidade)
+    activate DB
+    DB --> Sistema : 2.5 transacaoRegistrada
+    deactivate DB
+    Sistema -> DB : 2.6 atualizarSaldos(professor, aluno)
+    activate DB
+    DB --> Sistema : 2.7 saldosAtualizados
+    deactivate DB
+    Sistema -> Notif : 2.8 notificar(aluno, moedasRecebidas)
+    activate Notif
+    Notif --> Aluno : 2.9 email(moedas recebidas)
+    deactivate Notif
+    Sistema --> Prof : 2.10 envioConfirmado
+else Saldo insuficiente
+    Sistema --> Prof : 2.11 saldoInsuficiente("Saldo insuficiente")
+end
+deactivate Sistema
+
+Aluno -> Sistema : 3.1 listarVantagens()
+activate Sistema
+Sistema -> DB : 3.2 buscarVantagens()
+activate DB
+DB --> Sistema : 3.3 listaDeVantagens
+deactivate DB
+Sistema --> Aluno : 3.4 exibirVantagens
+deactivate Sistema
+
+Aluno -> Sistema : 3.5 resgatarVantagem(vantagemId)
+activate Sistema
+Sistema -> DB : 3.6 verificarSaldo(aluno)
+activate DB
+DB --> Sistema : 3.7 saldoAtual
+deactivate DB
+alt Saldo suficiente
+    Sistema -> DB : 3.8 debitarSaldo(aluno, custo)
+    activate DB
+    DB --> Sistema : 3.9 saldoAtualizado
+    deactivate DB
+    Sistema -> Sistema : 3.10 gerarCupom()
+    Sistema -> DB : 3.11 registrarResgate(aluno, vantagem, cupom)
+    activate DB
+    DB --> Sistema : 3.12 resgateRegistrado
+    deactivate DB
+    Sistema -> Notif : 3.13 enviarCupom(aluno, cupom)
+    activate Notif
+    Notif --> Aluno : 3.14 email(cupom)
+    deactivate Notif
+    Sistema -> Notif : 3.15 enviarCupom(empresa, cupom)
+    activate Notif
+    Notif --> Empresa : 3.16 email(cupom para conferência)
+    deactivate Notif
+    Sistema --> Aluno : 3.17 exibirCupom(codigo)
+else Saldo insuficiente
+    Sistema --> Aluno : 3.18 saldoInsuficiente("Saldo insuficiente")
+end
+deactivate Sistema
+
+Empresa -> Sistema : 4.1 validarCupom(codigo)
+activate Sistema
+Sistema -> DB : 4.2 buscarCupom(codigo)
+activate DB
+DB --> Sistema : 4.3 cupom
+deactivate DB
+Sistema --> Empresa : 4.4 resultadoValidacao(válido / utilizado)
+deactivate Sistema
+
+@enduml

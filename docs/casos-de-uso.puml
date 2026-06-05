@@ -1,0 +1,96 @@
+@startuml Casos de Uso - Sistema de Mérito Estudantil
+
+left to right direction
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam monochrome true
+
+skinparam actor {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam usecase {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+    ArrowColor #000000
+}
+skinparam rectangle {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam note {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+
+actor "Aluno"            as Aluno
+actor "Professor"        as Prof
+actor "Empresa Parceira" as Empresa
+actor "Administrador"    as Admin
+actor "Sistema"          as Sistema
+actor "Serviço de Email" as Email
+
+
+usecase "Cadastrar Aluno"          as UC01
+usecase "Cadastrar Empresa"        as UC02
+usecase "Autenticar (Login)"       as UC03
+
+usecase "Enviar Moedas"            as UC04
+usecase "Consultar Extrato"        as UC05
+
+usecase "Visualizar Vantagens"     as UC06
+usecase "Resgatar Vantagem"        as UC07
+
+usecase "Cadastrar Vantagem"       as UC08
+usecase "Gerenciar Vantagens"      as UC09
+usecase "Validar Cupom"            as UC10
+
+usecase "Gerenciar Instituições"   as UC11
+usecase "Importar Professores (PDF)" as UC12
+
+usecase "Creditar Moedas\nSemestrais" as UC13
+usecase "Gerar Cupom Único"        as UC14
+usecase "Enviar Notificações"      as UC15
+
+usecase "Validar Saldo"                   as VS
+
+
+Aluno --> UC01
+Aluno --> UC03
+Aluno --> UC05
+Aluno --> UC06
+Aluno --> UC07
+
+Prof --> UC03
+Prof --> UC04
+Prof --> UC05
+
+Empresa --> UC02
+Empresa --> UC03
+Empresa --> UC08
+Empresa --> UC09
+Empresa --> UC10
+
+Admin --> UC03
+Admin --> UC11
+Admin --> UC12
+
+Sistema --> UC13
+Sistema --> UC14
+Sistema --> UC15
+UC15 --> Email
+
+UC04 ..> VS   : <<include>>
+UC07 ..> VS   : <<include>>
+UC07 ..> UC14 : <<include>>
+UC04 ..> UC15 : <<include>>
+UC07 ..> UC15 : <<include>>
+UC12 ..> UC11 : <<include>>
+
+
+@enduml
