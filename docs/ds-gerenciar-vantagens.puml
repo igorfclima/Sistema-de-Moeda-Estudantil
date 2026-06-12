@@ -1,0 +1,92 @@
+@startuml Gerenciar Vantagens
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontColor #000000
+
+skinparam participant {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam actor {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam database {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam sequence {
+    ArrowColor #000000
+    LifeLineBorderColor #000000
+    LifeLineBackgroundColor #FFFFFF
+    GroupBackgroundColor #FFFFFF
+    GroupBorderColor #000000
+    DividerBackgroundColor #FFFFFF
+    DividerBorderColor #000000
+}
+
+actor       "Empresa Parceira"  as Empresa
+participant "Sistema de Mérito" as Sistema
+database    "Banco de Dados"    as DB
+
+== 1. Listar Vantagens da Empresa ==
+
+Empresa -> Sistema : 1.1 listarMinhasVantagens()
+activate Sistema
+Sistema -> DB : 1.2 buscarVantagensPorEmpresa(empresaId)
+activate DB
+DB --> Sistema : 1.3 listaVantagens
+deactivate DB
+Sistema --> Empresa : 1.4 exibirVantagens(lista)
+deactivate Sistema
+
+== 2. Editar Vantagem ==
+
+Empresa -> Sistema : 2.1 editarVantagem(vantagemId, novosDados)
+activate Sistema
+
+Sistema -> DB : 2.2 verificarPropriedade(vantagemId, empresaId)
+activate DB
+DB --> Sistema : 2.3 resultado
+deactivate DB
+
+alt Empresa é proprietária
+    Sistema -> DB : 2.4 atualizarVantagem(vantagemId, novosDados)
+    activate DB
+    DB --> Sistema : 2.5 vantagemAtualizada
+    deactivate DB
+    Sistema --> Empresa : 2.6 edicaoConfirmada
+else Empresa não é proprietária
+    Sistema --> Empresa : 2.7 erro("Acesso negado")
+end
+
+deactivate Sistema
+
+== 3. Remover Vantagem ==
+
+Empresa -> Sistema : 3.1 removerVantagem(vantagemId)
+activate Sistema
+
+Sistema -> DB : 3.2 verificarPropriedade(vantagemId, empresaId)
+activate DB
+DB --> Sistema : 3.3 resultado
+deactivate DB
+
+alt Empresa é proprietária
+    Sistema -> DB : 3.4 deletarVantagem(vantagemId)
+    activate DB
+    DB --> Sistema : 3.5 vantagemRemovida
+    deactivate DB
+    Sistema --> Empresa : 3.6 remocaoConfirmada
+else Empresa não é proprietária
+    Sistema --> Empresa : 3.7 erro("Acesso negado")
+end
+
+deactivate Sistema
+
+@enduml

@@ -1,0 +1,63 @@
+@startuml Cadastrar Vantagem
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontColor #000000
+
+skinparam participant {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam actor {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam database {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam sequence {
+    ArrowColor #000000
+    LifeLineBorderColor #000000
+    LifeLineBackgroundColor #FFFFFF
+    GroupBackgroundColor #FFFFFF
+    GroupBorderColor #000000
+    DividerBackgroundColor #FFFFFF
+    DividerBorderColor #000000
+}
+
+actor       "Empresa Parceira"  as Empresa
+participant "Sistema de Mérito" as Sistema
+database    "Banco de Dados"    as DB
+
+== 1. Cadastro de Vantagem ==
+
+Empresa -> Sistema : 1.1 cadastrarVantagem(nome, descricao, custo, urlImagem)
+activate Sistema
+
+Sistema -> Sistema : 1.2 validarCampos(nome, custo)
+
+alt Dados válidos
+    Sistema -> DB : 1.3 buscarEmpresa(empresaId)
+    activate DB
+    DB --> Sistema : 1.4 empresa
+    deactivate DB
+
+    Sistema -> DB : 1.5 salvarVantagem(nome, descricao, custo, urlImagem, empresa)
+    activate DB
+    DB --> Sistema : 1.6 vantagemSalva
+    deactivate DB
+
+    Sistema --> Empresa : 1.7 vantagemRegistrada(id, nome)
+
+else Dados inválidos
+    Sistema --> Empresa : 1.8 erro("Campos obrigatórios ausentes ou custo inválido")
+end
+
+deactivate Sistema
+
+@enduml

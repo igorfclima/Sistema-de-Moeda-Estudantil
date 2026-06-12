@@ -1,0 +1,79 @@
+@startuml Consultar Extrato
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontColor #000000
+
+skinparam participant {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam actor {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam database {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam sequence {
+    ArrowColor #000000
+    LifeLineBorderColor #000000
+    LifeLineBackgroundColor #FFFFFF
+    GroupBackgroundColor #FFFFFF
+    GroupBorderColor #000000
+    DividerBackgroundColor #FFFFFF
+    DividerBorderColor #000000
+}
+
+actor       "Professor"         as Prof
+actor       "Aluno"             as Aluno
+participant "Sistema de Mérito" as Sistema
+database    "Banco de Dados"    as DB
+
+== 1. Extrato do Professor (Moedas Enviadas) ==
+
+Prof -> Sistema : 1.1 consultarExtrato()
+activate Sistema
+
+Sistema -> DB : 1.2 buscarTransacoesPorProfessor(professorId)
+activate DB
+DB --> Sistema : 1.3 listaTransacoes
+deactivate DB
+
+Sistema -> DB : 1.4 buscarSaldoAtual(professorId)
+activate DB
+DB --> Sistema : 1.5 saldoAtual
+deactivate DB
+
+Sistema --> Prof : 1.6 exibirExtrato(transacoes, saldoAtual)
+deactivate Sistema
+
+== 2. Extrato do Aluno (Moedas Recebidas) ==
+
+Aluno -> Sistema : 2.1 consultarExtrato()
+activate Sistema
+
+Sistema -> DB : 2.2 buscarRecebimentosPorAluno(alunoId)
+activate DB
+DB --> Sistema : 2.3 listaRecebimentos
+deactivate DB
+
+Sistema -> DB : 2.4 buscarResgatesPorAluno(alunoId)
+activate DB
+DB --> Sistema : 2.5 listaResgates
+deactivate DB
+
+Sistema -> DB : 2.6 buscarSaldoAtual(alunoId)
+activate DB
+DB --> Sistema : 2.7 saldoAtual
+deactivate DB
+
+Sistema --> Aluno : 2.8 exibirExtrato(recebimentos, resgates, saldoAtual)
+deactivate Sistema
+
+@enduml

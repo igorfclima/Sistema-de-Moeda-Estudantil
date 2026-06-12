@@ -1,0 +1,73 @@
+@startuml Cadastrar Empresa Parceira
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontColor #000000
+
+skinparam participant {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam actor {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam database {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam sequence {
+    ArrowColor #000000
+    LifeLineBorderColor #000000
+    LifeLineBackgroundColor #FFFFFF
+    GroupBackgroundColor #FFFFFF
+    GroupBorderColor #000000
+    DividerBackgroundColor #FFFFFF
+    DividerBorderColor #000000
+}
+
+actor       "Administrador"     as Admin
+actor       "Empresa Parceira"  as Empresa
+participant "Sistema de Mérito" as Sistema
+database    "Banco de Dados"    as DB
+participant "Notificador"       as Notif
+
+== 1. Cadastro de Empresa Parceira ==
+
+Admin -> Sistema : 1.1 cadastrarEmpresa(nome, cnpj, email, senha)
+activate Sistema
+
+Sistema -> DB : 1.2 verificarEmail(email)
+activate DB
+DB --> Sistema : 1.3 resultado
+deactivate DB
+
+Sistema -> DB : 1.4 verificarCNPJ(cnpj)
+activate DB
+DB --> Sistema : 1.5 resultado
+deactivate DB
+
+alt Dados únicos (email e CNPJ não cadastrados)
+    Sistema -> DB : 1.6 salvarEmpresa(nome, cnpj, email, senhaHash)
+    activate DB
+    DB --> Sistema : 1.7 empresaSalva
+    deactivate DB
+
+    Sistema -> Notif : 1.8 enviarBoasVindas(empresa, credenciais)
+    activate Notif
+    Notif --> Empresa : 1.9 email(login e senha de acesso)
+    deactivate Notif
+
+    Sistema --> Admin : 1.10 empresaRegistrada(id, nome)
+
+else Dados duplicados
+    Sistema --> Admin : 1.11 erro("E-mail ou CNPJ já cadastrado")
+end
+
+deactivate Sistema
+
+@enduml

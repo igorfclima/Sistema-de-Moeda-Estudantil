@@ -1,0 +1,68 @@
+@startuml Visualizar Vantagens
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontColor #000000
+
+skinparam participant {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam actor {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam database {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam sequence {
+    ArrowColor #000000
+    LifeLineBorderColor #000000
+    LifeLineBackgroundColor #FFFFFF
+    GroupBackgroundColor #FFFFFF
+    GroupBorderColor #000000
+    DividerBackgroundColor #FFFFFF
+    DividerBorderColor #000000
+}
+
+actor       "Aluno"             as Aluno
+participant "Sistema de Mérito" as Sistema
+database    "Banco de Dados"    as DB
+
+== 1. Listagem de Vantagens ==
+
+Aluno -> Sistema : 1.1 listarVantagens()
+activate Sistema
+
+Sistema -> DB : 1.2 buscarVantagensDisponiveis()
+activate DB
+DB --> Sistema : 1.3 listaVantagens
+deactivate DB
+
+Sistema -> DB : 1.4 buscarSaldoAluno(alunoId)
+activate DB
+DB --> Sistema : 1.5 saldoAtual
+deactivate DB
+
+Sistema --> Aluno : 1.6 exibirVantagens(lista, saldoAtual)
+deactivate Sistema
+
+== 2. Detalhe de uma Vantagem ==
+
+Aluno -> Sistema : 2.1 verDetalheVantagem(vantagemId)
+activate Sistema
+
+Sistema -> DB : 2.2 buscarVantagem(vantagemId)
+activate DB
+DB --> Sistema : 2.3 vantagem(nome, descricao, custo, imagem, empresa)
+deactivate DB
+
+Sistema --> Aluno : 2.4 exibirDetalhe(vantagem)
+deactivate Sistema
+
+@enduml

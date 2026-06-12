@@ -1,0 +1,103 @@
+@startuml Gerenciar Instituições
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontColor #000000
+
+skinparam participant {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam actor {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam database {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam sequence {
+    ArrowColor #000000
+    LifeLineBorderColor #000000
+    LifeLineBackgroundColor #FFFFFF
+    GroupBackgroundColor #FFFFFF
+    GroupBorderColor #000000
+    DividerBackgroundColor #FFFFFF
+    DividerBorderColor #000000
+}
+
+actor       "Administrador"     as Admin
+participant "Sistema de Mérito" as Sistema
+database    "Banco de Dados"    as DB
+
+== 1. Listar Instituições ==
+
+Admin -> Sistema : 1.1 listarInstituicoes()
+activate Sistema
+Sistema -> DB : 1.2 buscarTodasInstituicoes()
+activate DB
+DB --> Sistema : 1.3 listaInstituicoes
+deactivate DB
+Sistema --> Admin : 1.4 exibirInstituicoes(lista)
+deactivate Sistema
+
+== 2. Criar Instituição ==
+
+Admin -> Sistema : 2.1 criarInstituicao(nome, cnpj)
+activate Sistema
+
+Sistema -> DB : 2.2 verificarCNPJ(cnpj)
+activate DB
+DB --> Sistema : 2.3 resultado
+deactivate DB
+
+alt CNPJ não cadastrado
+    Sistema -> DB : 2.4 salvarInstituicao(nome, cnpj)
+    activate DB
+    DB --> Sistema : 2.5 instituicaoSalva
+    deactivate DB
+    Sistema --> Admin : 2.6 instituicaoRegistrada(id, nome)
+else CNPJ já existe
+    Sistema --> Admin : 2.7 erro("CNPJ já cadastrado")
+end
+
+deactivate Sistema
+
+== 3. Editar Instituição ==
+
+Admin -> Sistema : 3.1 editarInstituicao(id, novosDados)
+activate Sistema
+Sistema -> DB : 3.2 atualizarInstituicao(id, novosDados)
+activate DB
+DB --> Sistema : 3.3 instituicaoAtualizada
+deactivate DB
+Sistema --> Admin : 3.4 edicaoConfirmada
+deactivate Sistema
+
+== 4. Remover Instituição ==
+
+Admin -> Sistema : 4.1 removerInstituicao(id)
+activate Sistema
+
+Sistema -> DB : 4.2 verificarVinculos(id)
+activate DB
+DB --> Sistema : 4.3 resultado
+deactivate DB
+
+alt Sem usuários vinculados
+    Sistema -> DB : 4.4 deletarInstituicao(id)
+    activate DB
+    DB --> Sistema : 4.5 instituicaoRemovida
+    deactivate DB
+    Sistema --> Admin : 4.6 remocaoConfirmada
+else Possui usuários vinculados
+    Sistema --> Admin : 4.7 erro("Instituição possui professores/alunos vinculados")
+end
+
+deactivate Sistema
+
+@enduml

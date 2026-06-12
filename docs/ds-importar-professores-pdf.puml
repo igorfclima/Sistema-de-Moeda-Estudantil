@@ -1,0 +1,82 @@
+@startuml Importar Professores via PDF
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontColor #000000
+
+skinparam participant {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam actor {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam database {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam sequence {
+    ArrowColor #000000
+    LifeLineBorderColor #000000
+    LifeLineBackgroundColor #FFFFFF
+    GroupBackgroundColor #FFFFFF
+    GroupBorderColor #000000
+    DividerBackgroundColor #FFFFFF
+    DividerBorderColor #000000
+}
+
+actor       "Administrador"     as Admin
+actor       "Professor"         as Prof
+participant "Sistema de Mérito" as Sistema
+participant "Leitor PDF"        as PDF
+database    "Banco de Dados"    as DB
+participant "Notificador"       as Notif
+
+== 1. Upload e Processamento do PDF ==
+
+Admin -> Sistema : 1.1 uploadPDF(arquivo, instituicaoId)
+activate Sistema
+
+Sistema -> PDF : 1.2 extrairTexto(arquivo)
+activate PDF
+PDF --> Sistema : 1.3 textoPDF
+deactivate PDF
+
+Sistema -> Sistema : 1.4 parsearProfessores(textoPDF)
+
+alt PDF válido e com dados
+    loop Para cada professor no PDF
+        Sistema -> DB : 1.5 verificarEmail(email)
+        activate DB
+        DB --> Sistema : 1.6 resultado
+        deactivate DB
+
+        alt Professor não cadastrado
+            Sistema -> DB : 1.7 salvarProfessor(nome, cpf, email, senhaHash, departamento, instituicao)
+            activate DB
+            DB --> Sistema : 1.8 professorSalvo
+            deactivate DB
+
+            Sistema -> Notif : 1.9 enviarCredenciais(professor)
+            activate Notif
+            Notif --> Prof : 1.10 email(login e senha de acesso)
+            deactivate Notif
+        else Professor já cadastrado
+            Sistema -> Sistema : 1.11 registrarErro("E-mail já existe: " + email)
+        end
+    end
+
+    Sistema --> Admin : 1.12 relatorioImportacao(importados, erros)
+
+else PDF inválido ou sem dados reconhecíveis
+    Sistema --> Admin : 1.13 erro("Formato de PDF inválido")
+end
+
+deactivate Sistema
+
+@enduml
