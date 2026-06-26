@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,6 +49,7 @@ public class ServicoEmail {
 
     // ── Métodos públicos ──────────────────────────────────────────────────────
 
+    @Async
     @Transactional
     public void enviarConfirmacaoProfessor(Professor professor, TransacaoEnvio transacao) {
         String assunto = "Confirmação: Moedas enviadas com sucesso";
@@ -59,6 +61,7 @@ public class ServicoEmail {
         log.info("Confirmação de envio enviada para professor: {}", professor.getEmail());
     }
 
+    @Async
     @Transactional
     public void enviarNotificacaoRecebimento(Aluno aluno, TransacaoEnvio transacao) {
         String assunto = "Você recebeu moedas no Sistema de Mérito!";
@@ -70,6 +73,7 @@ public class ServicoEmail {
         log.info("Notificação de recebimento enviada para aluno: {}", aluno.getEmail());
     }
 
+    @Async
     @Transactional
     public void enviarCupomAluno(Aluno aluno, Cupom cupom) {
         String assunto = "Seu cupom de resgate foi gerado!";
@@ -81,6 +85,7 @@ public class ServicoEmail {
         log.info("Cupom enviado para aluno: {} - Código: {}", aluno.getEmail(), cupom.getCodigoUnico());
     }
 
+    @Async
     @Transactional
     public void enviarNotificacaoEmpresa(EmpresaParceira empresa, Cupom cupom) {
         String assunto = "Novo resgate de cupom - Sistema de Mérito";

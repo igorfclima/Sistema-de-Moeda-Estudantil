@@ -2,6 +2,7 @@ package com.merito.sistema_merito.service;
 
 import com.merito.sistema_merito.domain.entity.Aluno;
 import com.merito.sistema_merito.domain.entity.Cupom;
+import com.merito.sistema_merito.domain.entity.EmpresaParceira;
 import com.merito.sistema_merito.domain.entity.TransacaoResgate;
 import com.merito.sistema_merito.domain.entity.Vantagem;
 import com.merito.sistema_merito.domain.enums.StatusVantagem;
@@ -90,9 +91,13 @@ public class ServicoResgate {
         transacao.setCupom(cupom);
         transacao = transacaoResgateRepository.save(transacao);
 
-        // Dispara notificações por email
+        // Força carregamento das associações lazy antes do envio async
+        EmpresaParceira empresa = vantagem.getEmpresaParceira();
+        empresa.getNomeEmpresa();
+        empresa.getEmail();
+
         servicoEmail.enviarCupomAluno(aluno, cupom);
-        servicoEmail.enviarNotificacaoEmpresa(vantagem.getEmpresaParceira(), cupom);
+        servicoEmail.enviarNotificacaoEmpresa(empresa, cupom);
 
         return transacao;
     }
