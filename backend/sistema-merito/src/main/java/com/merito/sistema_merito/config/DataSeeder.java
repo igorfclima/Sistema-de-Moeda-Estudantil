@@ -190,21 +190,26 @@ public class DataSeeder implements ApplicationRunner {
     }
 
     private void garantirAluno(String nome, String cpf, String rg, String endereco, String curso, Instituicao instituicao) {
-        if (alunoRepository.existsByCpf(cpf)) {
-            return;
-        }
+        String emailAluno = cpf.equals("777.777.777-77") ? "igrfclima@gmail.com" : cpf.replaceAll("[^0-9]", "") + "@sistemamerito.com";
 
-        Aluno aluno = new Aluno();
-        aluno.setNome(nome);
-        aluno.setCpf(cpf);
-        aluno.setRg(rg);
-        aluno.setEndereco(endereco);
-        aluno.setCurso(curso);
-        aluno.setEmail(cpf.replaceAll("[^0-9]", "") + "@sistemamerito.com");
-        aluno.setSenhaHash(passwordEncoder.encode("Senha@123"));
-        aluno.setSaldoMoedas(50);
-        aluno.setInstituicao(instituicao);
-        alunoRepository.save(aluno);
+        alunoRepository.findByCpf(cpf).ifPresentOrElse(existente -> {
+            if (!existente.getEmail().equals(emailAluno)) {
+                existente.setEmail(emailAluno);
+                alunoRepository.save(existente);
+            }
+        }, () -> {
+            Aluno aluno = new Aluno();
+            aluno.setNome(nome);
+            aluno.setCpf(cpf);
+            aluno.setRg(rg);
+            aluno.setEndereco(endereco);
+            aluno.setCurso(curso);
+            aluno.setEmail(emailAluno);
+            aluno.setSenhaHash(passwordEncoder.encode("Senha@123"));
+            aluno.setSaldoMoedas(50);
+            aluno.setInstituicao(instituicao);
+            alunoRepository.save(aluno);
+        });
     }
 
     private void garantirEmpresaParceira(String nomeEmpresa, String cnpj, String descricao, String email) {
