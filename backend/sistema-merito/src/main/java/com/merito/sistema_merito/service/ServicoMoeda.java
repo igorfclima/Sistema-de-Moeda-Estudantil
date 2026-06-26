@@ -81,7 +81,8 @@ public class ServicoMoeda {
 
         transacao = transacaoEnvioRepository.save(transacao);
 
-        // Dispara notificação por email ao aluno
+        // Dispara notificações: confirmação ao professor e recebimento ao aluno
+        servicoEmail.enviarConfirmacaoProfessor(professor, transacao);
         servicoEmail.enviarNotificacaoRecebimento(aluno, transacao);
 
         return transacao;

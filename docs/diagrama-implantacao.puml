@@ -1,0 +1,58 @@
+@startuml Diagrama de Implantação
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontColor #000000
+
+skinparam node {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam artifact {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam database {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam component {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam arrow {
+    Color #000000
+    FontColor #000000
+}
+
+
+component "Navegador Web" as Browser
+
+
+node "Vercel" {
+    artifact "Frontend\nNext.js / React" as Frontend
+}
+
+node "Render" {
+    artifact "Backend\nSpring Boot" as Backend
+}
+
+node "Render" {
+    database "PostgreSQL" as DB
+}
+
+node "Gmail" {
+    artifact "Servidor de E-mail" as SMTP
+}
+
+Browser  --> Frontend : "HTTPS"
+Frontend --> Backend  : "REST API\nHTTPS"
+Backend  --> DB       : "JDBC / SSL"
+Backend  --> SMTP     : "SMTP + STARTTLS"
+
+@enduml

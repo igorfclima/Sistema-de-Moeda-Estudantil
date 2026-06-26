@@ -1,0 +1,182 @@
+@startuml Diagrama de Comunicação
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam monochrome true
+skinparam defaultFontColor #000000
+
+skinparam participant {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam actor {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam database {
+    BackgroundColor #FFFFFF
+    BorderColor #000000
+    FontColor #000000
+}
+skinparam sequence {
+    ArrowColor #000000
+    LifeLineBorderColor #000000
+    LifeLineBackgroundColor #FFFFFF
+    GroupBackgroundColor #FFFFFF
+    GroupBorderColor #000000
+    DividerBackgroundColor #FFFFFF
+    DividerBorderColor #000000
+}
+
+actor       "Aluno"             as Aluno
+actor       "Professor"         as Prof
+actor       "Empresa Parceira"  as Empresa
+control     "Sistema de Mérito" as Sistema
+database    "Banco de Dados"    as DB
+boundary    "Notificador"       as Notif
+
+autonumber 1
+Aluno -> Sistema: autenticar(login, senha)
+activate Sistema
+
+autonumber 2
+Sistema -> DB: buscarUsuario(login)
+activate DB
+
+autonumber 3
+DB -->> Sistema: usuario
+deactivate DB
+
+autonumber 4
+Sistema -->> Aluno: tokenAcesso
+deactivate Sistema
+
+autonumber 5
+Prof -> Sistema: enviarMoedas(aluno, quantidade, motivo)
+activate Sistema
+
+autonumber 6
+Sistema -> DB: verificarSaldo(professor)
+activate DB
+
+autonumber 7
+DB -->> Sistema: saldoAtual
+deactivate DB
+
+autonumber 8
+Sistema -> DB: registrarTransacao(professor, aluno, quantidade)
+activate DB
+
+autonumber 9
+DB -->> Sistema: transacaoRegistrada
+deactivate DB
+
+autonumber 10
+Sistema -> DB: atualizarSaldos(professor, aluno)
+activate DB
+
+autonumber 11
+DB -->> Sistema: saldosAtualizados
+deactivate DB
+
+par Notificações de envio de moedas
+    autonumber 12.1
+    Sistema -> Notif: notificar(professor, envioConfirmado)
+    activate Notif
+
+    autonumber 12.2
+    Sistema -> Notif: notificar(aluno, moedasRecebidas)
+
+    autonumber 13.1
+    Notif -->> Prof: email(confirmação de envio)
+
+    autonumber 13.2
+    Notif -->> Aluno: email(moedas recebidas)
+    deactivate Notif
+end par
+
+autonumber 14
+Sistema -->> Prof: envioConfirmado
+deactivate Sistema
+
+autonumber 15
+Aluno -> Sistema: resgatarVantagem(vantagemId)
+activate Sistema
+
+autonumber 16
+Sistema -> DB: verificarSaldo(aluno)
+activate DB
+
+autonumber 17
+DB -->> Sistema: saldoAtual
+deactivate DB
+
+autonumber 18
+Sistema -> DB: debitarSaldo(aluno, custo)
+activate DB
+
+autonumber 19
+DB -->> Sistema: saldoAtualizado
+deactivate DB
+
+autonumber 20
+Sistema -> Sistema: [self] gerarCupom()
+
+autonumber 21
+Sistema -->> Sistema: codigoUnico
+
+autonumber 22
+Sistema -> DB: registrarResgate(aluno, vantagem, cupom)
+activate DB
+
+autonumber 23
+DB -->> Sistema: resgateRegistrado
+deactivate DB
+
+par Notificações de resgate
+    autonumber 24.1
+    Sistema -> Notif: enviarCupom(aluno, cupom + QRCode)
+    activate Notif
+
+    autonumber 24.2
+    Sistema -> Notif: enviarCupom(empresa, cupom + QRCode)
+
+    autonumber 25.1
+    Notif -->> Aluno: email(cupom + QR Code)
+
+    autonumber 25.2
+    Notif -->> Empresa: email(cupom para conferência + QR Code)
+    deactivate Notif
+end par
+
+autonumber 26
+Sistema -->> Aluno: exibirCupom(codigo)
+deactivate Sistema
+
+autonumber 27
+Empresa -> Sistema: validarCupom(codigo)
+activate Sistema
+
+autonumber 28
+Sistema -> DB: buscarCupom(codigo)
+activate DB
+
+autonumber 29
+DB -->> Sistema: cupom
+deactivate DB
+
+autonumber 30
+Sistema -> DB: marcarUtilizado(cupom)
+activate DB
+
+autonumber 31
+DB -->> Sistema: cupomAtualizado
+deactivate DB
+
+autonumber 32
+Sistema -->> Empresa: resultadoValidacao(válido)
+deactivate Sistema
+
+@enduml
