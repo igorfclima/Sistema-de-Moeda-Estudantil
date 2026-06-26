@@ -263,7 +263,7 @@ public class ServicoEmail {
 
     private String templateCupomAluno(Aluno aluno, Cupom cupom) {
         String vantagem = cupom.getTransacaoResgate().getVantagem().getNome();
-        String empresa = cupom.getTransacaoResgate().getVantagem().getEmpresaParceira().getNome();
+        String empresa = cupom.getTransacaoResgate().getVantagem().getEmpresaParceira().getNomeEmpresa();
         String corpo = "<p style=\"font-size:15px;color:#333;margin-bottom:20px\">"
                 + "Olá, <strong>" + aluno.getNome() + "</strong>! Seu cupom foi gerado com sucesso.</p>"
                 + "<div class=\"f\"><div class=\"lb\">Vantagem</div>"
