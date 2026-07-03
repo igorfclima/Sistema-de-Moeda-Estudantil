@@ -2,6 +2,8 @@ package com.merito.sistema_merito.controller;
 
 import com.merito.sistema_merito.domain.dto.ProfessorDto;
 import com.merito.sistema_merito.domain.dto.ProfessorRequest;
+import com.merito.sistema_merito.domain.dto.TransacaoEnvioDto;
+import com.merito.sistema_merito.domain.dto.EnviarMoedasRequest;
 import com.merito.sistema_merito.domain.entity.Instituicao;
 import com.merito.sistema_merito.domain.entity.Professor;
 import com.merito.sistema_merito.service.ServicoProfessor;
@@ -18,7 +20,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
@@ -65,14 +66,14 @@ public class ProfessorController {
     }
 
     @GetMapping("/{id}/extrato")
-    public ResponseEntity<List<com.merito.sistema_merito.domain.dto.TransacaoEnvioDto>> extrato(@PathVariable UUID id) {
+    public ResponseEntity<List<TransacaoEnvioDto>> extrato(@PathVariable UUID id) {
         return ResponseEntity.ok(servicoProfessor.consultarExtrato(id));
     }
 
     @PostMapping("/{id}/enviar-moedas")
-    public ResponseEntity<?> enviarMoedas(@PathVariable UUID id, @Valid @RequestBody com.merito.sistema_merito.domain.dto.EnviarMoedasRequest request) {
-        var t = servicoProfessor.enviarMoedas(id, request.alunoId(), request.quantidade(), request.motivo());
-        return ResponseEntity.ok(t);
+    public ResponseEntity<TransacaoEnvioDto> enviarMoedas(@PathVariable UUID id, @Valid @RequestBody EnviarMoedasRequest request) {
+        TransacaoEnvioDto transacao = servicoProfessor.enviarMoedas(id, request.alunoId(), request.quantidade(), request.motivo());
+        return ResponseEntity.ok(transacao);
     }
 
     @GetMapping("/{id}/alunos")
