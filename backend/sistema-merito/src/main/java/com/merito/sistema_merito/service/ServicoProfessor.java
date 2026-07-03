@@ -1,9 +1,13 @@
 package com.merito.sistema_merito.service;
 
 import com.merito.sistema_merito.domain.dto.ProfessorRequest;
+import com.merito.sistema_merito.domain.dto.TransacaoEnvioDto;
+import com.merito.sistema_merito.domain.entity.Aluno;
 import com.merito.sistema_merito.domain.entity.Instituicao;
 import com.merito.sistema_merito.domain.entity.Professor;
+import com.merito.sistema_merito.domain.entity.TransacaoEnvio;
 import com.merito.sistema_merito.exception.RecursoNaoEncontradoException;
+import com.merito.sistema_merito.repository.AlunoRepository;
 import com.merito.sistema_merito.repository.InstituicaoRepository;
 import com.merito.sistema_merito.repository.ProfessorRepository;
 import jakarta.transaction.Transactional;
@@ -15,17 +19,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class ServicoProfessor {
 
+    private static final int SALDO_INICIAL_PADRAO = 1000;
+
     private final ProfessorRepository professorRepository;
     private final InstituicaoRepository instituicaoRepository;
-    private final com.merito.sistema_merito.service.ServicoMoeda servicoMoeda;
-    private final com.merito.sistema_merito.repository.AlunoRepository alunoRepository;
+    private final ServicoMoeda servicoMoeda;
+    private final AlunoRepository alunoRepository;
     private final PasswordEncoder passwordEncoder;
 
     public ServicoProfessor(ProfessorRepository professorRepository,
                             InstituicaoRepository instituicaoRepository,
                             PasswordEncoder passwordEncoder,
-                            com.merito.sistema_merito.service.ServicoMoeda servicoMoeda,
-                            com.merito.sistema_merito.repository.AlunoRepository alunoRepository) {
+                            ServicoMoeda servicoMoeda,
+                            AlunoRepository alunoRepository) {
         this.professorRepository = professorRepository;
         this.instituicaoRepository = instituicaoRepository;
         this.passwordEncoder = passwordEncoder;
@@ -44,7 +50,7 @@ public class ServicoProfessor {
         professor.setNome(request.getNome());
         professor.setCpf(request.getCpf());
         professor.setDepartamento(request.getDepartamento());
-        professor.setSaldoMoedas(1000);
+        professor.setSaldoMoedas(SALDO_INICIAL_PADRAO);
         professor.setInstituicao(instituicao);
         return professorRepository.save(professor);
     }
@@ -82,16 +88,16 @@ public class ServicoProfessor {
         return servicoMoeda.consultarSaldoProfessor(professorId);
     }
 
-    public java.util.List<com.merito.sistema_merito.domain.dto.TransacaoEnvioDto> consultarExtrato(UUID professorId) {
+    public List<TransacaoEnvioDto> consultarExtrato(UUID professorId) {
         return servicoMoeda.consultarExtratoProfessor(professorId);
     }
 
     @Transactional
-    public com.merito.sistema_merito.domain.entity.TransacaoEnvio enviarMoedas(UUID professorId, UUID alunoId, int quantidade, String motivo) {
+    public TransacaoEnvio enviarMoedas(UUID professorId, UUID alunoId, int quantidade, String motivo) {
         return servicoMoeda.enviarMoedas(professorId, alunoId, quantidade, motivo);
     }
 
-    public java.util.List<com.merito.sistema_merito.domain.entity.Aluno> listarAlunosDaInstituicao(UUID professorId) {
+    public List<Aluno> listarAlunosDaInstituicao(UUID professorId) {
         Professor professor = buscarPorId(professorId);
         UUID instituicaoId = professor.getInstituicao().getId();
         return alunoRepository.findAll().stream().filter(a -> a.getInstituicao().getId().equals(instituicaoId)).toList();
