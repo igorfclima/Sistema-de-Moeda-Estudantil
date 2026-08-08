@@ -33,6 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ServicoEmail {
 
     private static final Logger log = LoggerFactory.getLogger(ServicoEmail.class);
+    // Sem retry policy para emails falhados. Se SMTP falha, notificação é perdida.
+    // Considere implementar fila de emails com retry automático.
 
     private final JavaMailSender mailSender;
     private final NotificacaoRepository notificacaoRepository;

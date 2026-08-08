@@ -29,6 +29,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/admin/instituicoes")
 public class AdminController {
+    // Este controller tem muitas responsabilidades. Considere extrair a lógica de
+    // import de PDF e envio de emails para services especializados.
 
     private final InstituicaoRepository instituicaoRepository;
     private final ProfessorRepository professorRepository;
@@ -91,7 +93,9 @@ public class AdminController {
 
             // generate confirmation PDF and send to admin email
             byte[] pdfConfirm = pdfService.generateConfirmationPdf(instituicao, created, senhas);
-            String adminEmail = "admin@sistemamerito.com";
+            //O email do admin está hardcoded. Isso deveria vir de uma propriedade
+        // de configuração (application.properties) para ser flexível por ambiente.
+        String adminEmail = "admin@sistemamerito.com";
             servicoEmail.enviarPdfAnexo(adminEmail, "Confirmação de cadastro de instituição: " + instituicao.getNome(), "Segue em anexo o PDF com os professores cadastrados.", pdfConfirm, instituicao.getNome() + "-professores.pdf", null);
         }
 

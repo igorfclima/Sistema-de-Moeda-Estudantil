@@ -10,6 +10,8 @@ public class LoginRequest {
     private String email;
 
     @NotBlank
+    // Sem validação de força de senha aqui. Usuário consegue fazer login com qualquer string.
+    // Considere um validador de força no controller/service ou apenas na criação (não no login).
     private String senha;
 
     public LoginRequest() {

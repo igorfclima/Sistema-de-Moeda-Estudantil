@@ -47,6 +47,8 @@ public class ServicoResgate {
      * @throws SaldoInsuficienteException    se aluno não tiver saldo suficiente
      * @throws VantagemIndisponivelException se vantagem não estiver ativa
      */
+    // Potencial N+1 query problem aqui. Se consultarResgatesAluno() é chamado
+    // em loop, gera muitas queries. Use @EntityGraph ou FETCH JOIN.
     @Transactional
     public TransacaoResgate resgatar(UUID alunoId, UUID vantagemId) {
         // Busca aluno
@@ -76,6 +78,10 @@ public class ServicoResgate {
         aluno.setSaldoMoedas(aluno.getSaldoMoedas() - vantagem.getCustoMoedas());
         alunoRepository.save(aluno);
 
+        // Há dois saves desnecessários aqui. Primeira salva sem cupom,
+        // depois atualiza e salva novamente. Isso gera duas queries UPDATE quando poderia ser uma.
+        // Associe o cupom no construtor e faça um único save.
+        
         // Cria transação de resgate
         TransacaoResgate transacao = new TransacaoResgate(null, OffsetDateTime.now(), vantagem.getCustoMoedas(), aluno, vantagem, null);
 

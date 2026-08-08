@@ -78,6 +78,8 @@ public class SecurityConfig {
                 .filter(s -> !s.isBlank())
                 .toList();
         configuration.setAllowedOrigins(origins);
+        // CORS muito permissivo em headers. Especifique apenas os necessarios
+        // para melhor seguranca e performance.
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

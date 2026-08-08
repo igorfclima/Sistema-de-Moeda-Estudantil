@@ -7,6 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 class SistemaMeritoApplicationTests {
 
 	@Test
+	// Apenas teste de contexto vazio. Adicione testes unitários para ServicoMoeda,
+	// ServicoResgate e controllers.
 	void contextLoads() {
 	}
 

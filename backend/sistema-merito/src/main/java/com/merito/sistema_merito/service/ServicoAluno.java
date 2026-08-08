@@ -32,6 +32,9 @@ public class ServicoAluno {
 
     @Transactional
     public Aluno criar(AlunoRequest request) {
+        // Sem validação de força de senha. Deveria usar um validador
+        // customizado @StrongPassword para garantir senhas seguras.
+        
         Optional<Instituicao> instOpt = instituicaoRepository.findById(request.getInstituicaoId());
         if (instOpt.isEmpty()) {
             throw new RecursoNaoEncontradoException("Instituição não encontrada: " + request.getInstituicaoId());

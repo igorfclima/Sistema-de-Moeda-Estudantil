@@ -21,6 +21,8 @@ public class AlunoRequest {
 
     @NotBlank
     @Size(max = 14)
+    // Apenas valida tamanho. Deveria usar validador customizado @ValidCpf
+    // para validar formato e dígitos verificadores.
     private String cpf;
 
     @NotBlank
